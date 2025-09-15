@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jiohotstar-app
+  namespace: jiohotstar
+  labels:
+    app: jiohotstar
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: jiohotstar
+  template:
+    metadata:
+      labels:
+        app: jiohotstar
+    spec:
+      containers:
+      - name: jiohotstar
+        image: 243826067468.dkr.ecr.us-east-1.amazonaws.com/jiohotstar:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: NODE_ENV
+          value: "production"
+        imagePullPolicy: Always
